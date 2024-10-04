@@ -1,34 +1,27 @@
-const { videos } = require("../mock/dados.json");
+const videosRepository = require("../repositories/videosRepository")
 
-class videosService {
-  encontrarTodos() {
-    return videos;
-  }
+class videosServices {
+    encontrarTodos(){
+        return videosRepository.encontrarTodos();
+    }
 
-  buscarPeloId(id) {
-    return videos.find((v) => v.id === id);
-  }
+    encontrarComFiltros(filtros) {
+        let videosFiltrados = videosRepository.encontrarTodos();
 
-  adicionar(video) {
-    return videos.push(video);
-  }
+        if(filtro.titulo) {
+            videosFiltrados =  videosFiltrados.filter((video) => 
+                video.titulo.toLowerCase().includes(filtros.titulo.toLowerCase())
+            );
+        }
 
-  atualizar(id, videoAtualizado) {
-    const video = this.buscarPeloId(id);
+        if(filtro.descricao) {
+            videosFiltrados =  videosFiltrados.filter((video) => 
+                video.titulo.toLowerCase().includes(filtros.descricao.toLowerCase())
+            );
+        }
 
-    video.titulo = videoAtualizado.titulo;
-    video.descricao = videoAtualizado.descricao;
-    video.quantidadeViews = videoAtualizado.quantidadeViews;
-    video.canalID = videoAtualizado.canalID;
-
-    return video;
-  }
-
-  excluir(id) {
-    const indiceDoVideo = videos.findIndex((v) => v.id === id);
-
-    return videos.splice(indiceDoVideo, 1);
-  }
+        return videosFiltrados;
+    }
 }
 
-module.exports = new videosService();
+module.exports = new videosServices();

@@ -1,19 +1,24 @@
-const videosService = require("../services/videosService");
+const videosService = require("../repositories/videosRepository");
 
 const Video = require("../models/Video");
+const videosService = require("../services/videosService");
 class videosController {
   index(req, res) {
     try {
-      const videos = videosService.encontrarTodos();
+      //Query params
+      //parametro.toLowerCase()
+
+      const filtros = req.query;
+
+      const videos = videosService.encontrarComFiltros(filtros);
+
       if (videos.length > 0) {
-        res.status(200).json(videos);
+        return res.status(200).json(videos);
       } else {
         res.status(404).json({ mensagem: "Nenhum vídeo encontrado" });
       }
     } catch (erro) {
-      res
-        .status(500)
-        .json({ mensagem: "Erro ao buscar vídeos", detalhes: erro.message });
+      next(erro);
     }
   }
 
@@ -41,9 +46,10 @@ class videosController {
 
   store(req, res) {
     try {
-      const { titulo, descricao, image, canalID } = req.body;
+      const imagePath = req.file?.filename;
+      const { titulo, descricao, canalID } = req.body;
 
-      const novoVideo = new Video(titulo, descricao, image, canalID);
+      const novoVideo = new Video(titulo, descricao, canalID);
 
       videosService.adicionar(novoVideo);
       res.status(201).json(novoVideo);
